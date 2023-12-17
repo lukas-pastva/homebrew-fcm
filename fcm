@@ -2,22 +2,45 @@
 
 check_docker() {
     if ! command -v docker &> /dev/null; then
-        echo "Docker is not installed. Please install Docker and try again."
-        exit 1
+        echo "Docker is not installed."
+
+        # Ask the user if they want to install Docker
+        read -p "Do you want to install Docker? (Y/n) " answer
+
+        # Convert the answer to lowercase
+        answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+
+        # Check if the answer is 'y' or 'yes'
+        if [[ "$answer" == "y" || "$answer" == "yes" ]]; then
+            echo "Installing Docker..."
+
+            # Use curl to download and run the installation script from get.docker.com
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sh get-docker.sh
+
+            echo "Docker has been installed."
+        else
+            echo "Docker installation skipped. Please install Docker manually and try again."
+            exit 1
+        fi
     fi
 }
 
+
 reinstall(){
+    read -p "Please input working directory (default is ~/Desktop): " input
+    WORKDIR=${input:-~/Desktop}
+
     read -sp "Enter GitLab Token: " GL_TOKEN
     export GL_TOKEN
 
     echo ""
-    echo "Starting fcm container..."
+    echo "Starting fcm container, please wait..."
     docker stop fcm >/dev/null 2>&1 || true
     docker container rm fcm >/dev/null 2>&1 || true
     docker image rm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1 || true
-    mkdir -p ~/fcm
-    docker run --name fcm -d --restart=unless-stopped -e GL_TOKEN=${GL_TOKEN} -v /var/run/docker.sock:/var/run/docker.sock -v ~/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
+    mkdir -p $WORKDIR/fcm
+    docker run --name fcm -d --restart=unless-stopped -e GL_TOKEN=${GL_TOKEN} -v /var/run/docker.sock:/var/run/docker.sock -v $WORKDIR/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
 }
 
 ensure_running() {
