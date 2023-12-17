@@ -15,8 +15,6 @@ ensure_fcm_running() {
         docker stop fcm >/dev/null 2>&1 || true
         docker container rm fcm >/dev/null 2>&1 || true
         docker run --name fcm -d --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock registry.gitlab.com/fatchilli/devops/fcm/fcm:latest
-    else
-        echo "fcm container is already running."
     fi
 }
 
@@ -27,6 +25,7 @@ function main() {
             check_docker
             docker stop fcm >/dev/null 2>&1 || true
             docker container rm fcm >/dev/null 2>&1 || true
+            docker image rm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1 || true
             docker run --name fcm -d --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock registry.gitlab.com/fatchilli/devops/fcm/fcm:latest
             ;;
         remp-list)
@@ -41,7 +40,7 @@ function main() {
             docker exec -i fcm remp-install "$@"
             ;;
         --version|-v)
-            echo "v0.1.6"
+            echo "v0.1.7"
             ;;
         *)
             echo "Unknown command: $1"
