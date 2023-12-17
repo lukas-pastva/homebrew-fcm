@@ -14,6 +14,7 @@ reinstall(){
     read -sp "Enter GitLab Token: " GL_PASSWORD
     export GL_PASSWORD
 
+    echo ""
     echo "Starting fcm container..."
     docker stop fcm >/dev/null 2>&1 || true
     docker container rm fcm >/dev/null 2>&1 || true
