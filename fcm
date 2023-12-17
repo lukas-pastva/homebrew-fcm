@@ -14,7 +14,8 @@ ensure_fcm_running() {
         echo "fcm container is not running. Starting..."
         docker stop fcm >/dev/null 2>&1 || true
         docker container rm fcm >/dev/null 2>&1 || true
-        docker run --name fcm -d --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
+        mkdir -p ~/fcm
+        docker run --name fcm -d --restart=unless-stopped -v /var/run/docker.sock:/var/run/docker.sock -v ~/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
     fi
 }
 
@@ -31,8 +32,7 @@ function main() {
         *)
             check_docker
             ensure_fcm_running
-            shift # Shift the arguments to skip the first one (command)
-            docker exec -it fcm fcm "$@"
+            docker exec -i fcm fcm "$@"
             ;;
     esac
 }
