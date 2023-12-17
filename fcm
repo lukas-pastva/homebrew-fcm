@@ -14,6 +14,7 @@ reinstall(){
     read -sp "Enter GitLab Token: " GL_PASSWORD
     export GL_PASSWORD
 
+    echo "Starting fcm container..."
     docker stop fcm >/dev/null 2>&1 || true
     docker container rm fcm >/dev/null 2>&1 || true
     docker image rm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1 || true
@@ -24,7 +25,6 @@ reinstall(){
 ensure_running() {
     check_docker
     if ! docker ps --format '{{.Names}}' | grep -q '^fcm$'; then
-        echo "fcm container is not running. Starting..."
         reinstall
     fi
 }
@@ -45,6 +45,7 @@ function main() {
 
 # Check if at least one argument is provided
 if [ $# -lt 1 ]; then
+    ensure_running
     docker exec -i fcm fcm help
     exit 1
 fi
