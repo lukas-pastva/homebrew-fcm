@@ -1,0 +1,46 @@
+name: Create Release and Archive
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Read Version
+        id: version
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'Lukas Pastva'
+          git config --global user.email 'devops@fatchilli.com'
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Archive Code
+        run: tar -czvf fcm-${{ env.VERSION }}.tar.gz fcm
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./fcm-${{ env.VERSION }}.tar.gz
+          asset_name: fcm-${{ env.VERSION }}.tar.gz
+          asset_content_type: application/gzip
