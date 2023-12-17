@@ -8,11 +8,8 @@ check_docker() {
 }
 
 reinstall(){
-    read -p "Enter GitLab Username: " GL_USERNAME
-    export GL_USERNAME
-    
-    read -sp "Enter GitLab Token: " GL_PASSWORD
-    export GL_PASSWORD
+    read -sp "Enter GitLab Token: " GL_TOKEN
+    export GL_TOKEN
 
     echo ""
     echo "Starting fcm container..."
@@ -20,7 +17,7 @@ reinstall(){
     docker container rm fcm >/dev/null 2>&1 || true
     docker image rm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1 || true
     mkdir -p ~/fcm
-    docker run --name fcm -d --restart=unless-stopped -e GL_USERNAME=${GL_USERNAME} -e GL_PASSWORD=${GL_PASSWORD} -v /var/run/docker.sock:/var/run/docker.sock -v ~/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
+    docker run --name fcm -d --restart=unless-stopped -e GL_TOKEN=${GL_TOKEN} -v /var/run/docker.sock:/var/run/docker.sock -v ~/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
 }
 
 ensure_running() {
