@@ -40,7 +40,7 @@ reinstall(){
     docker container rm fcm >/dev/null 2>&1 || true
     docker image rm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1 || true
     mkdir -p $WORKDIR/fcm
-    docker run --name fcm -d --restart=unless-stopped -e GL_TOKEN=${GL_TOKEN} -v /var/run/docker.sock:/var/run/docker.sock -v $WORKDIR/fcm:/root/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
+    docker run --name fcm -d --restart=unless-stopped -e GL_TOKEN=${GL_TOKEN} -e WORKDIR=$WORKDIR -v /var/run/docker.sock:/var/run/docker.sock -v $WORKDIR/fcm:$WORKDIR/fcm registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
 }
 
 ensure_running() {
