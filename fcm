@@ -46,9 +46,8 @@ reinstall(){
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $WORKDIR/fcm:$WORKDIR/fcm \
     -v /etc/hosts:/etc/hosts:rw \
+    --privileged \
     registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
-
-}
 
 ensure_running() {
     check_docker
