@@ -49,6 +49,8 @@ reinstall(){
     --privileged \
     registry.gitlab.com/fatchilli/devops/fcm/fcm:latest >/dev/null 2>&1
 
+}
+
 ensure_running() {
     check_docker
     if ! docker ps --format '{{.Names}}' | grep -q '^fcm$'; then
