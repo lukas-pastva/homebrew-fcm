@@ -1,5 +1,12 @@
 #!/bin/bash
 
+check_docker_login() {
+    if [ ! -f "$HOME/.docker/config.json" ] || ! grep -q '"registry.gitlab.com"' "$HOME/.docker/config.json"; then
+        echo "You are not logged in to registry.gitlab.com/fatchilli. Logging You in."
+        echo $GL_TOKEN | docker login registry.gitlab.com/fatchilli --username fcm --password-stdin
+    fi
+}
+
 check_docker() {
     if ! command -v docker &> /dev/null; then
         echo "Docker is not installed."
@@ -27,12 +34,14 @@ check_docker() {
 }
 
 
-reinstall(){
+install(){
     read -p "Please input working directory (default is ~/Desktop): " input
     WORKDIR=${input:-~/Desktop}
 
     read -sp "Enter GitLab Token: " GL_TOKEN
     export GL_TOKEN
+
+    check_docker_login
 
     echo ""
     echo "Starting fcm container, please wait..."
@@ -54,7 +63,7 @@ reinstall(){
 ensure_running() {
     check_docker
     if ! docker ps --format '{{.Names}}' | grep -q '^fcm$'; then
-        reinstall
+        install
     fi
 }
 
