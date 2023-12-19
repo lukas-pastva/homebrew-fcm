@@ -1,7 +1,7 @@
 class Fcm < Formula
   desc "fcm"
   homepage "https://github.com/lukas-pastva/homebrew-fcm"
-  url "https://github.com/lukas-pastva/homebrew-fcm/releases/download/v0.1.21/fcm-v0.1.21.tar.gz"
+  url "https://github.com/lukas-pastva/homebrew-fcm/releases/download/v0.1.22/fcm-v0.1.22.tar.gz"
   sha256 ""
   license "Apache-2.0 license"
 
